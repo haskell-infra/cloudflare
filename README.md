@@ -1,29 +1,20 @@
-# Modern Haskell Cryptography
+# Haskell bindings for CloudFlare
 
-[![Build Status](https://travis-ci.org/thoughtpolice/hs-nacl.png?branch=master)](https://travis-ci.org/thoughtpolice/hs-nacl)
+[![Build Status](https://travis-ci.org/haskell-infra/cloudflare.png?branch=master)](https://travis-ci.org/haskell-infra/cloudflare)
 [![BSD3](http://b.repl.ca/v1/license-BSD3-blue.png)](http://en.wikipedia.org/wiki/BSD_licenses)
 [![Haskell](http://b.repl.ca/v1/language-haskell-lightgrey.png)](http://www.haskell.org)
 
-[NaCl][] (pronounced "salt") is a fast library for cryptographic
-networking. Think of it like OpenSSL, but faster, easier, and more
-secure.
-
-These are the awesome Haskell bindings.
-
 [NaCl]: http://nacl.cr.yp.to/
+
+These are some awesome [CloudFlare][] bindings for Haskell.
 
 # Getting started
 
 It's just a `cabal install` away on [Hackage][]:
 
 ```bash
-$ cabal install nacl
+$ cabal install cloudflare
 ```
-
-After you install it, be sure to check out the [wiki][] for more
-documentation, examples, and help.
-
-[wiki]: https://github.com/thoughtpolice/hs-nacl/wiki
 
 # Join in
 
@@ -32,27 +23,23 @@ in the GitHub [issue tracker][].
 
 Master [git repository][gh]:
 
-* `git clone https://github.com/thoughtpolice/hs-nacl.git`
-
-There's also a [BitBucket mirror][bb]:
-
-* `git clone https://bitbucket.org/thoughtpolice/hs-nacl.git`
+* `git clone https://github.com/haskell-infra/cloudflare.git`
 
 # Authors
 
-See [AUTHORS.txt](https://raw.github.com/thoughtpolice/hs-nacl/master/AUTHORS.txt).
+See [AUTHORS.txt](https://raw.github.com/haskell-infra/cloudflare/master/AUTHORS.txt).
 
 # License
 
 BSD3. See
-[LICENSE.txt](https://raw.github.com/thoughtpolice/hs-nacl/master/LICENSE.txt)
+[LICENSE.txt](https://raw.github.com/haskell-infra/cloudflare/master/LICENSE.txt)
 for terms of copyright and redistribution.
 
-[contribute]: https://github.com/thoughtpolice/hs-nacl/blob/master/CONTRIBUTING.md
-[issue tracker]: http://github.com/thoughtpolice/hs-nacl/issues
-[gh]: http://github.com/thoughtpolice/hs-nacl
-[bb]: http://bitbucket.org/thoughtpolice/hs-nacl
+[contribute]: https://github.com/haskell-infra/cloudflare/blob/master/CONTRIBUTING.md
+[issue tracker]: http://github.com/haskell-infra/cloudflare/issues
+[gh]: http://github.com/haskell-infra/cloudflare
 [Hackage]: http://hackage.haskell.org/package/nacl
+[CloudFlare]: https://www.cloudflare.com
 
 # Cryptography Notice
 
