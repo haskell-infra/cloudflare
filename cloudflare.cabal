@@ -1,0 +1,64 @@
+name:                cloudflare
+version:             0.0.0.0
+category:            Cloud, Networking, Web, DNS
+license:             BSD3
+synopsis:            Haskell bindings and utilities for CloudFlare
+homepage:            https://github.com/thoughtpolice/hs-cloudflare/
+bug-reports:         http://github.com/thoughtpolice/hs-cloudflare/issues
+license-file:        LICENSE.txt
+copyright:           Copyright (c) Austin Seipp 2011-2013
+author:              Austin Seipp
+maintainer:          Austin Seipp <aseipp@pobox.com>
+build-type:          Simple
+cabal-version:       >=1.10
+tested-with:         GHC == 7.8.3
+
+description:
+
+extra-source-files:
+  .travis.yml
+  AUTHORS.txt
+  README.md
+  CONTRIBUTING.md
+  CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/thoughtpolice/hs-cloudflare.git
+
+-------------------------------------------------------------------------------
+-- Build pt 1: main project
+
+library
+  ghc-options:        -Wall -fwarn-tabs
+  default-language:   Haskell2010
+  hs-source-dirs:     src
+  exposed-modules:
+    CloudFlare
+  build-depends:
+    aeson             >= 0.8 && < 0.9,
+    base              >= 4   && < 5,
+    bytestring        >= 0.9 && < 0.11,
+    containers        >= 0.5 && < 0.7,
+    errors            >= 1.4 && < 1.5,
+    lens              >= 4.4 && < 4.5,
+    lens-aeson        >= 1.0 && < 1.1,
+    wreq              >= 0.2 && < 0.3,
+    text              >= 1.0 && < 1.3
+
+executable cloudflare
+  ghc-options:        -Wall -fwarn-tabs
+  default-language:   Haskell2010
+  hs-source-dirs:     util
+  main-is:            Main.hs
+  build-depends:
+    cloudflare,
+    aeson             >= 0.8 && < 0.9,
+    base              >= 4   && < 5,
+    bytestring        >= 0.9 && < 0.11,
+    containers        >= 0.5 && < 0.7,
+    errors            >= 1.4 && < 1.5,
+    lens              >= 4.4 && < 4.5,
+    lens-aeson        >= 1.0 && < 1.1,
+    wreq              >= 0.2 && < 0.3,
+    text              >= 1.0 && < 1.3
