@@ -2,7 +2,6 @@
 module Main where
 
 import CloudFlare
-import Control.Applicative ((<$>))
 import Control.Lens
 import Data.Monoid
 import qualified Data.Text as T
@@ -17,10 +16,14 @@ import System.Environment.XDG.BaseDir
 -- TODO: Partial function lolol
 main :: IO ()
 main = do
-  query <- T.pack . head <$> getArgs -- TODO: Partial (Pretty error on invalid usage)
-  Right entries <- loadConfig >>= flip getZoneEntries "haskell.org" -- TODO: Partial (handle Left)
-  let matches = V.filter (\x -> x ^. entryName == query) entries -- TODO: use lens's (filtered)
-  V.mapM_ (\x -> TIO.putStrLn $ x ^. entryContent) matches
+  args <- getArgs
+  if length args /= 1
+    then error "Usage: cloudflare <full (sub)domain>"
+    else do
+      let query = T.pack . head $ args
+      Right entries <- loadConfig >>= flip getZoneEntries "haskell.org" -- TODO: Partial (handle Left)
+      let matches = V.filter (\x -> x ^. entryName == query) entries -- TODO: use lens's (filtered)
+      V.mapM_ (\x -> TIO.putStrLn $ x ^. entryContent) matches
 
 -- TODO: Make this work for multiple CF accounts instead of just one.
 loadConfig :: IO Account
