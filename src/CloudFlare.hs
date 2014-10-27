@@ -1,10 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell #-}
 -- |
 -- Module      : CloudFlare
--- Copyright   : (c) Copyright 2014 Austin Seipp
+-- Copyright   : (c) Copyright 2014 Austin Seipp, Ricky Elrod
 -- License     : BSD3
 --
--- Maintainer  : aseipp@pobox.com
+-- Maintainer  : admin@haskell.org
 -- Stability   : experimental
 -- Portability : GHC
 --
@@ -21,6 +22,15 @@ module CloudFlare
        , setSecurityLevel
        , setCacheLevel
        , getZoneIDs
+       , getZoneEntries
+
+         -- * Low-level API access
+       , postCf
+
+         -- * Lenses
+       , entryType
+       , entryName
+       , entryContent
        ) where
 
 import           Data.Map
@@ -30,6 +40,7 @@ import qualified Data.Text            as T
 import           Control.Lens
 import           Data.Aeson
 import           Data.Aeson.Lens
+import qualified Data.Vector as V
 import           Network.Wreq
 
 -- | A @'Zone'@ is a domain name registered and managed by CloudFlare
@@ -65,6 +76,14 @@ data CacheLevel
 data Account
   = Account Text Text
   deriving (Eq, Show, Ord)
+
+data DNSRecord = DNSRecord {
+    _entryType :: T.Text
+  , _entryName :: T.Text
+  , _entryContent :: T.Text
+  } deriving (Eq, Show)
+
+makeLenses ''DNSRecord
 
 --------------------------------------------------------------------------------
 -- Main API
@@ -110,6 +129,20 @@ getZoneIDs a z = postCf k a "zone_check" [ "zones" := T.intercalate "," z ]
         Just x -> case (fromJSON x) of
           Success s -> s
           Error _   -> Data.Map.empty
+
+-- | Get all DNS entries for a particular 'Zone'.
+getZoneEntries :: Account -> Zone -> IO (Either Text (V.Vector DNSRecord))
+getZoneEntries acc zone = do
+  postCf k acc "rec_load_all" [ "z" := zone ]
+  where
+    k resp = do
+      let v = resp ^. responseBody . key "response" . key "recs" . key "objs" . _Array
+      V.mapM processRec v
+    processRec record = do
+      let name = record ^?! key "name" . _String
+          value = record ^?! key "content" . _String
+          type' = record ^?! key "type" . _String
+      return $ DNSRecord type' name value
 
 --------------------------------------------------------------------------------
 -- Internals
