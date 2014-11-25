@@ -25,6 +25,8 @@ module CloudFlare
        , getZoneIDs
        , getZoneEntries
        , setDevMode
+       , clearCache
+       , purgeFile
 
          -- * Low-level API access
        , postCf
@@ -166,6 +168,21 @@ setDevMode a z m = postCf k a "devmode" [ "z" := z, "v" := modeStr ]
     k _ = return ()
     modeStr | m == DevMode = "1" :: Text
             | otherwise    = "0"
+
+-- | Purge CloudFlare cache servers of all content. It may take up to
+-- 48 hours for the cache to rebuild and optimum performance to be
+-- achieved so this function should be used sparingly.
+clearCache :: Account -> Zone -> IO (Either Text ())
+clearCache a z = postCf k a "fpurge_ts" [ "z" := z, "v" := ("1" :: Text) ]
+  where k _ = return ()
+
+-- | Clear a single file from CloudFlare's cache servers.
+--
+-- Keep in mind, that if an HTTP and an HTTPS version of the file
+-- exists, then both versions will need to be purged independently
+purgeFile :: Account -> Zone -> Text -> IO (Either Text ())
+purgeFile a z url = postCf k a "zone_file_purge" [ "z" := z, "url" := url ]
+  where k _ = return ()
 
 --------------------------------------------------------------------------------
 -- Internals
