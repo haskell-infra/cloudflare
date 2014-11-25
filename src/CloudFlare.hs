@@ -15,6 +15,7 @@ module CloudFlare
          Zone, ZoneID
        , SecurityLevel(..)
        , CacheLevel(..)
+       , SiteMode(..)
        , Account
 
          -- * Functions
@@ -23,6 +24,7 @@ module CloudFlare
        , setCacheLevel
        , getZoneIDs
        , getZoneEntries
+       , setDevMode
 
          -- * Low-level API access
        , postCf
@@ -70,6 +72,16 @@ data CacheLevel
   | Basic
   deriving (Eq, Show, Ord, Enum, Bounded)
 
+-- | @'Zone'@ site mode. When in @'DevMode'@, the CloudFlare cache is
+-- completely bypassed for development purposes.
+--
+-- Development mode is not permanent, and lasts only for three hours,
+-- or until it is toggled off.
+data SiteMode
+  = DevMode
+  | ProductionMode
+  deriving (Eq, Show, Ord, Enum, Bounded)
+
 -- | An @'Account'@ token is the combination of your API key plus your
 -- email address, and is simply a backwards-compatible wrapper around
 -- them both.
@@ -98,6 +110,7 @@ account = Account
 setSecurityLevel :: Account -> Zone -> SecurityLevel -> IO (Either Text ())
 setSecurityLevel a z lvl = postCf k a "sec_lvl" [ "z" := z, "v" := lvlStr ]
   where
+    k _ = return ()
     lvlStr | lvl == Help   = "help" :: Text
            | lvl == High   = "high"
            | lvl == Medium = "med"
@@ -105,17 +118,14 @@ setSecurityLevel a z lvl = postCf k a "sec_lvl" [ "z" := z, "v" := lvlStr ]
            | lvl == Off    = "eoff"
            | otherwise     = "IMPOSSIBLE" -- warning suppression
 
-    k _ = return ()
-
 -- | Set the caching level for a domain.
 setCacheLevel :: Account -> Zone -> CacheLevel -> IO (Either Text ())
 setCacheLevel a z lvl = postCf k a "cache_lvl" [ "z" := z, "v" := lvlStr ]
   where
+    k _ = return ()
     lvlStr | lvl == Basic      = "basic" :: Text
            | lvl == Aggressive = "agg"
            | otherwise         = "IMPOSSIBLE" -- warning suppression
-
-    k _ = return ()
 
 
 -- | Get the IDs for a particular Domain.
@@ -143,6 +153,19 @@ getZoneEntries acc zone = do
           value = record ^?! key "content" . _String
           type' = record ^?! key "type" . _String
       return $ DNSRecord type' name value
+
+-- | Set the mode for a particular @'Zone'@ entry. When in
+-- @'DevMode'@, the CloudFlare cache is completely bypassed for
+-- development purposes.
+--
+-- Development mode is not permanent, and lasts only for three hours,
+-- or until it is toggled off.
+setDevMode :: Account -> Zone -> SiteMode -> IO (Either Text ())
+setDevMode a z m = postCf k a "devmode" [ "z" := z, "v" := modeStr ]
+  where
+    k _ = return ()
+    modeStr | m == DevMode = "1" :: Text
+            | otherwise    = "0"
 
 --------------------------------------------------------------------------------
 -- Internals
