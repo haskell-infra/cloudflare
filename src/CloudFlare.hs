@@ -110,25 +110,24 @@ account = Account
 
 -- | Set the security level for a domain.
 setSecurityLevel :: Account -> Zone -> SecurityLevel -> IO (Either Text ())
-setSecurityLevel a z lvl = postCf k a "sec_lvl" [ "z" := z, "v" := lvlStr ]
+setSecurityLevel a z lvl = postCf k a "sec_lvl" [ "z" := z, "v" := lvlStr lvl ]
   where
     k _ = return ()
-    lvlStr | lvl == Help   = "help" :: Text
-           | lvl == High   = "high"
-           | lvl == Medium = "med"
-           | lvl == Low    = "low"
-           | lvl == Off    = "eoff"
-           | otherwise     = "IMPOSSIBLE" -- warning suppression
+    lvlStr :: SecurityLevel -> T.Text
+    lvlStr Help   = "help"
+    lvlStr High   = "high"
+    lvlStr Medium = "med"
+    lvlStr Low    = "low"
+    lvlStr Off    = "eoff"
 
 -- | Set the caching level for a domain.
 setCacheLevel :: Account -> Zone -> CacheLevel -> IO (Either Text ())
-setCacheLevel a z lvl = postCf k a "cache_lvl" [ "z" := z, "v" := lvlStr ]
+setCacheLevel a z lvl = postCf k a "cache_lvl" [ "z" := z, "v" := lvlStr lvl ]
   where
     k _ = return ()
-    lvlStr | lvl == Basic      = "basic" :: Text
-           | lvl == Aggressive = "agg"
-           | otherwise         = "IMPOSSIBLE" -- warning suppression
-
+    lvlStr :: CacheLevel -> T.Text
+    lvlStr Basic      = "basic"
+    lvlStr Aggressive = "agg"
 
 -- | Get the IDs for a particular Domain.
 getZoneIDs :: Account -> [Zone] -> IO (Either Text (Map Zone ZoneID))
